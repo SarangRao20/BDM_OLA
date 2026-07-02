@@ -39,13 +39,37 @@ Built as the capstone for IIT Madras's BDM course, this analysis follows the ful
 
 ---
 
+##  Visualizations
+
+| Figure | Description |
+|--------|-------------|
+| ![cancellation-rate-by-area](images/figure4_top10_cancellation_rate.jpg) | **Top 10 pickup areas by cancellation rate** — cancellations concentrate in specific zones |
+| ![cancellation-by-hour](images/figure9_cancellation_by_hour.png) | **Cancellation rate by hour of day** — evening and late-night hours show clear spikes |
+| ![cancellation-vs-volatility](images/figure6_cancellation_vs_volatility.jpg) | **Cancellation rate vs earnings volatility** — high-cancellation zones also have most volatile driver income |
+| ![completion-by-payment](images/figure13_completion_by_payment.jpg) | **Completion rates by payment method** — digital payments outperform cash |
+| ![cancellation-by-payment](images/figure14_cancellation_by_payment.jpg) | **Cancellation rate by payment method** — cash rides cancel more frequently |
+| ![avg-fare-by-vehicle](images/figure1_avg_booking_value_by_vehicle.png) | **Average booking value by vehicle type** — fare variation across Mini, Sedan, Prime, Auto, Bike |
+| ![correlation-heatmap](images/figure3_correlation_heatmap.jpg) | **Correlation heatmap** — relationships between numerical features |
+| ![earnings-high-vs-low-cancel](images/figure8_earnings_high_vs_low_cancel.jpg) | **Driver earnings in high- vs low-cancellation areas** — income stability comparison |
+
+---
+
 ##  Repository Structure
 
 ```
 BDM_OLA/
-├── 24f2000232_OLA_BDM.docx      # Full project report (documentation, methodology, findings)
-├── OLA_BDM.ipynb                 # Analysis notebook (data cleaning, EDA, visualization, modeling)
-└── Bengaluru_Ola_Booking_Data.csv # Raw dataset
+├── 24f2000232_OLA_BDM.docx       # Full project report (documentation, methodology, findings)
+├── OLA_BDM.ipynb                  # Analysis notebook (data cleaning, EDA, visualization, modeling)
+├── Bengaluru_Ola_Booking_Data.csv # Raw dataset
+└── images/                        # Extracted figures from the report
+    ├── figure1_avg_booking_value_by_vehicle.png
+    ├── figure3_correlation_heatmap.jpg
+    ├── figure4_top10_cancellation_rate.jpg
+    ├── figure6_cancellation_vs_volatility.jpg
+    ├── figure8_earnings_high_vs_low_cancel.jpg
+    ├── figure9_cancellation_by_hour.png
+    ├── figure13_completion_by_payment.jpg
+    └── figure14_cancellation_by_payment.jpg
 ```
 
 ---
