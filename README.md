@@ -43,14 +43,22 @@ Built as the capstone for IIT Madras's BDM course, this analysis follows the ful
 
 | Figure | Description |
 |--------|-------------|
-| ![cancellation-rate-by-area](images/figure4_top10_cancellation_rate.jpg) | **Top 10 pickup areas by cancellation rate** — cancellations concentrate in specific zones |
-| ![cancellation-by-hour](images/figure9_cancellation_by_hour.png) | **Cancellation rate by hour of day** — evening and late-night hours show clear spikes |
-| ![cancellation-vs-volatility](images/figure6_cancellation_vs_volatility.jpg) | **Cancellation rate vs earnings volatility** — high-cancellation zones also have most volatile driver income |
-| ![completion-by-payment](images/figure13_completion_by_payment.jpg) | **Completion rates by payment method** — digital payments outperform cash |
-| ![cancellation-by-payment](images/figure14_cancellation_by_payment.jpg) | **Cancellation rate by payment method** — cash rides cancel more frequently |
-| ![avg-fare-by-vehicle](images/figure1_avg_booking_value_by_vehicle.png) | **Average booking value by vehicle type** — fare variation across Mini, Sedan, Prime, Auto, Bike |
-| ![correlation-heatmap](images/figure3_correlation_heatmap.jpg) | **Correlation heatmap** — relationships between numerical features |
-| ![earnings-high-vs-low-cancel](images/figure8_earnings_high_vs_low_cancel.jpg) | **Driver earnings in high- vs low-cancellation areas** — income stability comparison |
+| ![avg-booking-value-by-vehicle](images/figure1_avg_booking_value_by_vehicle.jpg) | **Figure 1:** Average booking value by vehicle type |
+| ![demand-top-5-pickup](images/figure2_demand_top5_pickup.jpg) | **Figure 2:** Demand in top 5 pickup areas |
+| ![correlation-heatmap](images/figure3_correlation_heatmap.png) | **Figure 3:** Correlation heatmap of operational metrics |
+| ![top10-cancellation-rate](images/figure4_top10_cancellation_rate.jpg) | **Figure 4:** Top 10 pickup areas by cancellation rate |
+| ![top10-earnings-volatility](images/figure5_top10_earnings_volatility.jpg) | **Figure 5:** Top 10 pickup areas by driver earnings volatility |
+| ![cancellation-vs-volatility](images/figure6_cancellation_vs_volatility.jpg) | **Figure 6:** Cancellation rate vs earnings volatility by area |
+| ![booking-value-stddev](images/figure7_booking_value_stddev.png) | **Figure 7:** Std dev of booking value — income variability per trip |
+| ![earnings-high-vs-low-cancel](images/figure8_earnings_high_vs_low_cancel.jpg) | **Figure 8:** Driver earnings in high- vs low-cancellation areas |
+| ![cancellation-by-hour](images/figure9_cancellation_by_hour.jpg) | **Figure 9:** Cancellation rate by hour of day |
+| ![vtat-distribution](images/figure10_vtat_distribution.jpg) | **Figure 10:** VTAT distribution for successful bookings |
+| ![rating-by-vtat-bin](images/figure11_rating_by_vtat_bin.jpg) | **Figure 11:** Average customer rating by VTAT bin |
+| ![actual-vs-predicted-fare](images/figure12_actual_vs_predicted_fare.jpg) | **Figure 12:** Actual vs predicted fare (ridge regression) |
+| ![completion-by-payment](images/figure13_completion_by_payment.png) | **Figure 13:** Completion rates by payment method |
+| ![cancellation-by-payment](images/figure14_cancellation_by_payment.png) | **Figure 14:** Cancellation rate by payment method |
+| ![rating-by-payment](images/figure15_rating_by_payment.jpg) | **Figure 15:** Average customer rating by payment method |
+| ![completion-by-vehicle](images/figure16_completion_by_vehicle.jpg) | **Figure 16:** Completion rate by vehicle type |
 
 ---
 
@@ -61,15 +69,23 @@ BDM_OLA/
 ├── 24f2000232_OLA_BDM.docx       # Full project report (documentation, methodology, findings)
 ├── OLA_BDM.ipynb                  # Analysis notebook (data cleaning, EDA, visualization, modeling)
 ├── Bengaluru_Ola_Booking_Data.csv # Raw dataset
-└── images/                        # Extracted figures from the report
-    ├── figure1_avg_booking_value_by_vehicle.png
-    ├── figure3_correlation_heatmap.jpg
+└── images/                        # Figures 1–16 from the report
+    ├── figure1_avg_booking_value_by_vehicle.jpg
+    ├── figure2_demand_top5_pickup.jpg
+    ├── figure3_correlation_heatmap.png
     ├── figure4_top10_cancellation_rate.jpg
+    ├── figure5_top10_earnings_volatility.jpg
     ├── figure6_cancellation_vs_volatility.jpg
+    ├── figure7_booking_value_stddev.png
     ├── figure8_earnings_high_vs_low_cancel.jpg
-    ├── figure9_cancellation_by_hour.png
-    ├── figure13_completion_by_payment.jpg
-    └── figure14_cancellation_by_payment.jpg
+    ├── figure9_cancellation_by_hour.jpg
+    ├── figure10_vtat_distribution.jpg
+    ├── figure11_rating_by_vtat_bin.jpg
+    ├── figure12_actual_vs_predicted_fare.jpg
+    ├── figure13_completion_by_payment.png
+    ├── figure14_cancellation_by_payment.png
+    ├── figure15_rating_by_payment.jpg
+    └── figure16_completion_by_vehicle.jpg
 ```
 
 ---
