@@ -6,596 +6,592 @@
 <title>Ola Bangalore — Operational Efficiency Report</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 :root {
-  --bg: #0a0e17; --bg2: #111827; --bg3: #1f2937; --bg4: #374151;
-  --border: #1f2937; --text: #f3f4f6; --text2: #9ca3af; --text3: #6b7280;
-  --accent: #3b82f6; --accent2: #10b981; --accent3: #f59e0b; --danger: #ef4444; --purple: #8b5cf6;
+  --bg: #070b14; --bg2: #0d1421; --bg3: #141d2d; --bg4: #1c2840;
+  --border: rgba(255,255,255,0.06); --border-hover: rgba(59,130,246,0.3);
+  --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+  --accent: #3b82f6; --accent2: #10b981; --accent3: #f59e0b; --danger: #ef4444; --purple: #8b5cf6; --pink: #ec4899;
   --grad1: linear-gradient(135deg, #3b82f6, #8b5cf6);
   --grad2: linear-gradient(135deg, #10b981, #3b82f6);
   --grad3: linear-gradient(135deg, #f59e0b, #ef4444);
+  --grad4: linear-gradient(135deg, #8b5cf6, #ec4899);
+  --shadow: 0 4px 30px rgba(0,0,0,0.3);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; overflow-x:hidden; }
+
+/* PROGRESS BAR */
+#progress { position:fixed; top:0; left:0; width:0; height:3px; background:var(--grad1); z-index:9999; transition:width 0.1s; }
+#progress::after { content:''; position:absolute; right:0; top:-2px; width:60px; height:7px; background:var(--grad1); border-radius:0 4px 4px 0; filter:blur(6px); }
 
 /* NAV */
-.topnav { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(10,14,23,0.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 40px; display:flex; align-items:center; height:60px; gap:4px; overflow-x:auto; }
-.topnav a { padding:8px 16px; color:var(--text2); text-decoration:none; font-size:13px; font-weight:500; border-radius:6px; transition:0.2s; white-space:nowrap; }
+.topnav { position:fixed; top:3px; left:0; right:0; z-index:1000; background:rgba(7,11,20,0.85); backdrop-filter:blur(20px) saturate(1.4); border-bottom:1px solid var(--border); padding:0 40px; display:flex; align-items:center; height:58px; gap:2px; overflow-x:auto; }
+.topnav::-webkit-scrollbar { height:0; }
+.topnav a { padding:7px 14px; color:var(--text3); text-decoration:none; font-size:12.5px; font-weight:500; border-radius:8px; transition:0.25s; white-space:nowrap; letter-spacing:0.3px; }
 .topnav a:hover { color:var(--text); background:var(--bg3); }
-.topnav a.active { color:var(--accent); background:rgba(59,130,246,0.1); }
-.nav-brand { font-weight:700; font-size:15px; color:var(--text); margin-right:20px; white-space:nowrap; display:flex; align-items:center; gap:8px; }
-.nav-brand span { color:var(--accent); }
+.topnav a.active { color:#fff; background:rgba(59,130,246,0.15); }
+.nav-brand { font-weight:800; font-size:14px; color:var(--text); margin-right:16px; white-space:nowrap; display:flex; align-items:center; gap:8px; }
+.nav-brand .logo { width:28px; height:28px; border-radius:8px; background:var(--grad1); display:flex; align-items:center; justify-content:center; font-size:14px; }
 
 /* HERO */
-.hero { margin-top:60px; padding:60px 40px 40px; background: radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 50%, rgba(139,92,246,0.05) 0%, transparent 60%); border-bottom:1px solid var(--border); }
-.hero h1 { font-size:36px; font-weight:800; background:var(--grad1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; }
-.hero .subtitle { color:var(--text2); font-size:16px; margin-top:10px; max-width:720px; line-height:1.7; }
-.hero .meta { display:flex; gap:24px; margin-top:24px; flex-wrap:wrap; }
-.hero .meta-item { display:flex; align-items:center; gap:6px; color:var(--text3); font-size:13px; }
+.hero { margin-top:61px; padding:80px 40px 50px; position:relative; overflow:hidden; border-bottom:1px solid var(--border); background: radial-gradient(ellipse at 20% 30%, rgba(59,130,246,0.1) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(139,92,246,0.06) 0%, transparent 60%), radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.04) 0%, transparent 50%); }
+.hero::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.03) 0%, transparent 50%); animation:heroGlow 8s ease-in-out infinite alternate; }
+@keyframes heroGlow { 0% { transform:translate(0,0); } 100% { transform:translate(5%,5%); } }
+.hero > * { position:relative; z-index:1; }
+.hero .tag { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); font-size:11px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; }
+.hero h1 { font-size:44px; font-weight:900; line-height:1.15; letter-spacing:-1px; }
+.hero h1 .grad { background:var(--grad1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 .grad2 { background:var(--grad2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { color:var(--text2); font-size:16px; margin-top:14px; max-width:680px; line-height:1.8; }
 
-/* KPI */
-.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:30px 0; }
-.kpi { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; transition:0.3s; }
-.kpi:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,0.3); }
-.kpi .kpi-top { display:flex; justify-content:space-between; align-items:flex-start; }
-.kpi .kpi-icon { font-size:22px; }
-.kpi .kpi-num { font-size:28px; font-weight:700; background:var(--grad1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-top:8px; }
-.kpi .kpi-label { font-size:12px; color:var(--text3); margin-top:2px; text-transform:uppercase; letter-spacing:0.5px; font-weight:500; }
-.kpi .kpi-change { font-size:11px; padding:2px 8px; border-radius:20px; }
-.kpi .kpi-change.up { background:rgba(16,185,129,0.15); color:var(--accent2); }
-.kpi .kpi-change.down { background:rgba(239,68,68,0.15); color:var(--danger); }
+.kpi-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:32px 0; }
+.kpi { background:rgba(13,20,33,0.6); backdrop-filter:blur(10px); border:1px solid var(--border); border-radius:14px; padding:20px; transition:0.3s; position:relative; overflow:hidden; }
+.kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--grad1); opacity:0; transition:0.3s; }
+.kpi:hover { border-color:var(--border-hover); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+.kpi:hover::before { opacity:1; }
+.kpi .kpi-num { font-size:30px; font-weight:800; letter-spacing:-1px; background:var(--grad1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi .kpi-label { font-size:11px; color:var(--text3); margin-top:3px; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+.kpi .kpi-icon { font-size:16px; margin-bottom:8px; display:inline-block; }
+.kpi .kpi-sub { font-size:11px; color:var(--text3); margin-top:4px; }
 
 /* SECTION */
-.section { padding:60px 40px; border-bottom:1px solid var(--border); }
+.section { padding:60px 40px; border-bottom:1px solid var(--border); position:relative; }
 .section:last-of-type { border-bottom:none; }
-.section-header { margin-bottom:32px; }
-.section-header .sec-num { font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; }
-.section-header h2 { font-size:28px; font-weight:700; color:var(--text); }
-.section-header p { color:var(--text2); margin-top:8px; max-width:700px; font-size:15px; line-height:1.7; }
+.section-header { margin-bottom:28px; }
+.section-header .sec-tag { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:6px; background:var(--bg3); font-size:11px; font-weight:600; color:var(--accent); margin-bottom:10px; }
+.section-header h2 { font-size:28px; font-weight:700; letter-spacing:-0.5px; }
+.section-header h2 .highlight { color:var(--accent); }
+.section-header p { color:var(--text2); margin-top:8px; font-size:15px; max-width:700px; line-height:1.7; }
 
 /* PROBLEM FLOW */
-.flow { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:24px 0; }
-.flow-item { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; position:relative; }
-.flow-item .flow-step { font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:600; color:var(--accent); margin-bottom:6px; }
-.flow-item h4 { font-size:14px; font-weight:600; margin-bottom:6px; color:var(--text); }
-.flow-item p { font-size:13px; color:var(--text2); line-height:1.6; }
-.flow-arrow { display:flex; align-items:center; justify-content:center; color:var(--text3); font-size:20px; }
+.flow-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:24px 0; }
+.flow-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; position:relative; transition:0.3s; }
+.flow-card:hover { border-color:var(--border-hover); transform:translateY(-2px); }
+.flow-card .fc-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; margin-bottom:10px; }
+.flow-card .fc-icon.blue { background:rgba(59,130,246,0.12); }
+.flow-card .fc-icon.green { background:rgba(16,185,129,0.12); }
+.flow-card .fc-icon.amber { background:rgba(245,158,11,0.12); }
+.flow-card .fc-step { font-size:10px; text-transform:uppercase; letter-spacing:1.2px; font-weight:700; color:var(--accent); margin-bottom:4px; }
+.flow-card h4 { font-size:15px; font-weight:600; margin-bottom:6px; }
+.flow-card p { font-size:13px; color:var(--text2); line-height:1.7; }
 
-/* CONTENT LAYOUT */
-.content-row { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:20px 0; }
-.content-full { margin:20px 0; }
+/* CONTENT */
+.content-split { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:20px 0; }
+.chart-card { background:var(--bg2); border:1px solid var(--border); border-radius:14px; overflow:hidden; transition:0.3s; }
+.chart-card:hover { border-color:var(--border-hover); }
+.chart-card .chart-head { display:flex; align-items:center; gap:8px; padding:16px 18px 0; font-size:13px; font-weight:600; color:var(--text); }
+.chart-card .chart-body { min-height:380px; }
 
-.chart-box { background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; min-height:400px; }
-.chart-box .chart-title { padding:14px 18px 0; font-size:14px; font-weight:600; color:var(--text); }
-.chart-box .chart-wrap { min-height:380px; }
-
-/* INSIGHT CARDS */
-.insight { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:24px; margin:20px 0; }
-.insight-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-.insight-header .badge { font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px; }
-.badge-finding { background:rgba(59,130,246,0.15); color:var(--accent); }
-.badge-recommend { background:rgba(16,185,129,0.15); color:var(--accent2); }
-.badge-limitation { background:rgba(239,68,68,0.15); color:var(--danger); }
-.insight h4 { font-size:16px; font-weight:600; color:var(--text); }
-.insight p { font-size:14px; color:var(--text2); line-height:1.7; }
-
-/* TABLES */
-.table-wrap { overflow-x:auto; margin:20px 0; background:var(--bg2); border:1px solid var(--border); border-radius:12px; }
-.table-wrap table { width:100%; border-collapse:collapse; font-size:14px; }
-.table-wrap th { padding:14px 16px; text-align:left; font-weight:600; color:var(--text); background:var(--bg3); cursor:pointer; user-select:none; white-space:nowrap; }
-.table-wrap th:hover { background:var(--bg4); }
-.table-wrap td { padding:12px 16px; color:var(--text2); border-top:1px solid var(--border); }
-.table-wrap tr:hover td { background:var(--bg3); }
+/* INSIGHT BLOCK */
+.insight { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:24px; margin:20px 0; transition:0.3s; }
+.insight:hover { border-color:var(--border-hover); }
+.insight-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.badge { font-size:10px; font-weight:700; padding:4px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:0.8px; }
+.badge-blue { background:rgba(59,130,246,0.12); color:var(--accent); }
+.badge-green { background:rgba(16,185,129,0.12); color:var(--accent2); }
+.badge-red { background:rgba(239,68,68,0.12); color:var(--danger); }
+.insight h4 { font-size:17px; font-weight:600; margin-bottom:8px; }
+.insight p { font-size:14px; color:var(--text2); line-height:1.8; }
 
 /* TABS */
-.tab-bar { display:flex; gap:6px; margin:16px 0; flex-wrap:wrap; }
-.tab-btn { padding:8px 20px; border:1px solid var(--border); border-radius:8px; background:var(--bg2); color:var(--text2); cursor:pointer; font-size:13px; font-weight:500; transition:0.2s; }
+.tab-strip { display:flex; gap:6px; margin:16px 0; flex-wrap:wrap; }
+.tab-btn { padding:8px 20px; border:1px solid var(--border); border-radius:8px; background:var(--bg2); color:var(--text3); cursor:pointer; font-size:13px; font-weight:500; transition:0.25s; }
 .tab-btn:hover { border-color:var(--accent); color:var(--text); }
-.tab-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
-.tab-pane { display:none; }
+.tab-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 4px 15px rgba(59,130,246,0.25); }
+.tab-pane { display:none; animation:fadeIn 0.3s; }
 .tab-pane.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-/* RECOMMENDATIONS GRID */
+/* TABLE */
+.table-card { overflow-x:auto; margin:20px 0; background:var(--bg2); border:1px solid var(--border); border-radius:14px; }
+.table-card table { width:100%; border-collapse:collapse; font-size:13px; }
+.table-card th { padding:14px 18px; text-align:left; font-weight:600; color:var(--text); background:var(--bg3); cursor:pointer; user-select:none; white-space:nowrap; transition:0.2s; }
+.table-card th:hover { background:var(--bg4); }
+.table-card th .sort-icon { display:inline-block; margin-left:6px; opacity:0.3; }
+.table-card th.sorted .sort-icon { opacity:1; color:var(--accent); }
+.table-card td { padding:13px 18px; color:var(--text2); border-top:1px solid var(--border); }
+.table-card tr:hover td { background:var(--bg3); }
+
+/* REC GRID */
 .rec-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:24px 0; }
-.rec-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:24px; transition:0.3s; }
-.rec-card:hover { border-color:var(--accent); transform:translateY(-2px); }
-.rec-card .rec-icon { font-size:28px; margin-bottom:10px; }
-.rec-card h4 { font-size:15px; font-weight:600; color:var(--text); margin-bottom:8px; }
+.rec-card { background:var(--bg2); border:1px solid var(--border); border-radius:14px; padding:24px; transition:0.3s; position:relative; overflow:hidden; }
+.rec-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; opacity:0; transition:0.3s; }
+.rec-card:nth-child(1)::before { background:var(--grad1); }
+.rec-card:nth-child(2)::before { background:var(--grad2); }
+.rec-card:nth-child(3)::before { background:var(--grad4); }
+.rec-card:hover { border-color:var(--border-hover); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+.rec-card:hover::before { opacity:1; }
+.rec-card .rec-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:12px; }
+.rec-card:nth-child(1) .rec-icon { background:rgba(59,130,246,0.12); }
+.rec-card:nth-child(2) .rec-icon { background:rgba(16,185,129,0.12); }
+.rec-card:nth-child(3) .rec-icon { background:rgba(236,72,153,0.12); }
+.rec-card h4 { font-size:15px; font-weight:600; margin-bottom:8px; }
 .rec-card p { font-size:13px; color:var(--text2); line-height:1.7; }
 
 /* LIMITATIONS */
-.lim-list { display:grid; gap:12px; margin:20px 0; }
-.lim-item { display:flex; gap:14px; background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:18px; }
-.lim-item .lim-icon { font-size:18px; flex-shrink:0; margin-top:2px; }
-.lim-item .lim-text h4 { font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px; }
-.lim-item .lim-text p { font-size:13px; color:var(--text2); line-height:1.6; }
+.lim-grid { display:grid; gap:12px; margin:20px 0; }
+.lim-card { display:flex; gap:16px; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; transition:0.3s; }
+.lim-card:hover { border-color:var(--border-hover); transform:translateX(4px); }
+.lim-card .lim-icon { width:40px; height:40px; border-radius:10px; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.lim-card .lim-body h4 { font-size:14px; font-weight:600; margin-bottom:4px; }
+.lim-card .lim-body p { font-size:13px; color:var(--text2); line-height:1.7; }
 
-/* SCROLL TO TOP */
-#topBtn { position:fixed; bottom:30px; right:30px; width:44px; height:44px; border-radius:12px; background:var(--accent); color:#fff; border:none; font-size:18px; cursor:pointer; opacity:0; transform:translateY(20px); transition:0.3s; z-index:99; box-shadow:0 4px 20px rgba(59,130,246,0.3); }
-#topBtn.show { opacity:1; transform:translateY(0); }
-#topBtn:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(59,130,246,0.5); }
+/* TOP BTN */
+#topBtn { position:fixed; bottom:30px; right:30px; width:46px; height:46px; border-radius:14px; background:var(--bg3); border:1px solid var(--border); color:var(--text2); font-size:18px; cursor:pointer; opacity:0; transform:translateY(20px) scale(0.9); transition:0.35s cubic-bezier(0.22,1,0.36,1); z-index:99; backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; }
+#topBtn.show { opacity:1; transform:translateY(0) scale(1); }
+#topBtn:hover { background:var(--accent); border-color:var(--accent); color:#fff; transform:translateY(-3px) scale(1.05); box-shadow:0 8px 30px rgba(59,130,246,0.3); }
 
-/* FOOTER */
-footer { padding:40px; text-align:center; color:var(--text3); font-size:13px; border-top:1px solid var(--border); background:var(--bg2); }
+footer { padding:40px; text-align:center; border-top:1px solid var(--border); background:var(--bg2); }
+footer p { color:var(--text3); font-size:13px; }
 footer a { color:var(--accent); text-decoration:none; }
-footer a:hover { text-decoration:underline; }
+
+.section-divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:0; }
 
 @media(max-width:900px) {
-  .topnav { padding:0 16px; }
+  .topnav { padding:0 12px; gap:0; }
+  .topnav a { padding:6px 10px; font-size:11px; }
   .hero, .section { padding:40px 20px; }
-  .content-row, .flow, .rec-grid { grid-template-columns:1fr; }
-  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .hero h1 { font-size:28px; }
+  .content-split, .flow-grid, .rec-grid { grid-template-columns:1fr; }
+  .kpi-strip { grid-template-columns:repeat(2,1fr); }
 }
 </style>
 </head>
 <body>
 
+<div id="progress"></div>
+
 <!-- NAV -->
 <nav class="topnav">
-  <div class="nav-brand">⚡ <span>OLA</span> | Bangalore</div>
+  <div class="nav-brand"><span class="logo">⚡</span> OLA <span style="color:var(--accent);font-weight:300;">|</span> <span style="color:var(--text2);font-weight:400;">Bangalore</span></div>
   <a data-target="overview" class="active">Overview</a>
   <a data-target="data">Data</a>
   <a data-target="correlation">Correlation</a>
   <a data-target="demand">Demand</a>
-  <a data-target="p1">Cancellations</a>
+  <a data-target="p1">Cancel & Earnings</a>
   <a data-target="p2">Payments</a>
   <a data-target="p3">Wait Times</a>
   <a data-target="fare">Fare Model</a>
-  <a data-target="findings">Recommendations</a>
+  <a data-target="rec">Recommendations</a>
 </nav>
 
 <!-- HERO -->
 <div class="hero" id="overview">
-  <h1>Ola Bangalore<br>Operational Efficiency Analysis</h1>
-  <p class="subtitle">A data-driven investigation into 50,000+ Ola Bangalore ride records to identify why cancellations spike, how payment methods affect completion, and what drives service quality — with actionable recommendations for operations, product, and driver teams.</p>
-  <div class="meta">
-    <span class="meta-item">📊 50,000+ ride records</span>
-    <span class="meta-item">🔬 16 interactive analyses</span>
-    <span class="meta-item">🎯 3 core problem areas</span>
-    <span class="meta-item">📅 IIT Madras BDM Capstone</span>
-  </div>
-
-  <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-top"><span class="kpi-icon">🚗</span><span class="kpi-change up">+100%</span></div><div class="kpi-num" data-count="50000">0</div><div class="kpi-label">Total Ride Records</div></div>
-    <div class="kpi"><div class="kpi-top"><span class="kpi-icon">✅</span><span class="kpi-change up">66.9%</span></div><div class="kpi-num" data-count="33484">0</div><div class="kpi-label">Completed Rides</div></div>
-    <div class="kpi"><div class="kpi-top"><span class="kpi-icon">❌</span><span class="kpi-change down">33.1%</span></div><div class="kpi-num" data-count="16516">0</div><div class="kpi-label">Cancelled / Other</div></div>
-    <div class="kpi"><div class="kpi-top"><span class="kpi-icon">📈</span><span class="kpi-change up">₹1,023</span></div><div class="kpi-num" data-count="1023">0</div><div class="kpi-label">Avg Booking Value</div></div>
-    <div class="kpi"><div class="kpi-top"><span class="kpi-icon">🚙</span></div><div class="kpi-num">7</div><div class="kpi-label">Vehicle Types</div></div>
-    <div class="kpi"><div class="kpi-top"><span class="kpi-icon">⭐</span><span class="kpi-change up">4.00</span></div><div class="kpi-num" data-count="4">0</div><div class="kpi-label">Avg Customer Rating</div></div>
+  <div class="tag"><span>✦</span> BDM Capstone · IIT Madras</div>
+  <h1>Ola Bangalore<br><span class="grad">Operational Efficiency</span> <span class="grad2">Analysis</span></h1>
+  <p>A data-driven deep dive into <strong>50,000+ Ola Bangalore ride records</strong> — uncovering why cancellations spike, how payment methods affect completion, what drives service quality, and what Ola can do about it.</p>
+  <div class="kpi-strip">
+    <div class="kpi"><span class="kpi-icon">📊</span><div class="kpi-num" data-count="50000">0</div><div class="kpi-label">Ride Records</div><div class="kpi-sub">50,000 bookings analyzed</div></div>
+    <div class="kpi"><span class="kpi-icon">✅</span><div class="kpi-num" data-count="33484">0</div><div class="kpi-label">Completed Rides</div><div class="kpi-sub">66.9% success rate</div></div>
+    <div class="kpi"><span class="kpi-icon">❌</span><div class="kpi-num" data-count="16516">0</div><div class="kpi-label">Cancelled / Other</div><div class="kpi-sub">33.1% non-completion</div></div>
+    <div class="kpi"><span class="kpi-icon">💰</span><div class="kpi-num" data-count="1023">0</div><div class="kpi-label">Avg Booking Value</div><div class="kpi-sub">₹1,023 avg fare</div></div>
+    <div class="kpi"><span class="kpi-icon">🚙</span><div class="kpi-num">7</div><div class="kpi-label">Vehicle Types</div><div class="kpi-sub">Auto to Prime SUV</div></div>
+    <div class="kpi"><span class="kpi-icon">⭐</span><div class="kpi-num" data-count="4">0</div><div class="kpi-label">Avg Rating</div><div class="kpi-sub">/5.0 customer score</div></div>
   </div>
 </div>
 
 <!-- DATA -->
 <div class="section" id="data">
   <div class="section-header">
-    <div class="sec-num">Foundation</div>
-    <h2>Dataset & Methodology</h2>
-    <p>The Bengaluru Ola Booking Dataset contains 50,000 ride records across 21 variables, capturing the full lifecycle of each ride from booking to completion or cancellation.</p>
+    <div class="sec-tag">📋 Foundation</div>
+    <h2>Dataset & <span class="highlight">Methodology</span></h2>
+    <p>50,000 ride records across 21 variables — cleaned, feature-engineered, and analyzed through the full data analytics lifecycle.</p>
   </div>
-
-  <div class="content-row">
+  <div class="content-split">
     <div class="insight" style="margin:0;">
-      <h4>📋 Data Pipeline</h4>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+      <h4>Pipeline</h4>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0;">
         <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Raw CSV</span>
-        <span style="color:var(--text3);font-size:16px;">→</span>
-        <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Data Cleaning</span>
-        <span style="color:var(--text3);font-size:16px;">→</span>
-        <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Feature Engineering</span>
-        <span style="color:var(--text3);font-size:16px;">→</span>
+        <span style="color:var(--text3);font-size:12px;">→</span>
+        <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Clean</span>
+        <span style="color:var(--text3);font-size:12px;">→</span>
+        <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Features</span>
+        <span style="color:var(--text3);font-size:12px;">→</span>
         <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">EDA</span>
-        <span style="color:var(--text3);font-size:16px;">→</span>
-        <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Modeling</span>
-        <span style="color:var(--text3);font-size:16px;">→</span>
-        <span style="background:var(--accent);padding:6px 14px;border-radius:6px;font-size:12px;color:#fff;">Recommendations</span>
+        <span style="color:var(--text3);font-size:12px;">→</span>
+        <span style="background:var(--bg3);padding:6px 14px;border-radius:6px;font-size:12px;color:var(--text2);">Model</span>
+        <span style="color:var(--text3);font-size:12px;">→</span>
+        <span style="background:var(--accent);padding:6px 14px;border-radius:6px;font-size:12px;color:#fff;">Recommend</span>
       </div>
-      <p style="margin-top:14px;font-size:13px;color:var(--text2);">Features engineered: Hour of Day, Day of Week, Peak Hour flag, Weekend flag, Is_Success indicator. Categorical encoding for pickup/drop areas, vehicle type, and payment method.</p>
+      <p style="font-size:13px;color:var(--text2);">Features: Hour, DayOfWeek, Weekend, Peak_Hour, Is_Success. Encoded: Pickup/Drop location, Vehicle Type, Payment Method.</p>
     </div>
     <div class="insight" style="margin:0;">
-      <h4>📊 Descriptive Statistics</h4>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
-        <div><span style="color:var(--text3);font-size:11px;">Metric</span><br><span style="color:var(--text);font-size:13px;font-weight:600;">Booking Value</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Avg</span><br><span style="color:var(--text);font-size:13px;">₹1,023 ± 564</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Metric</span><br><span style="color:var(--text);font-size:13px;font-weight:600;">Ride Distance</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Avg</span><br><span style="color:var(--text);font-size:13px;">25.4 ± 14.2 km</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Metric</span><br><span style="color:var(--text);font-size:13px;font-weight:600;">Avg VTAT</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Avg</span><br><span style="color:var(--text);font-size:13px;">10.5 ± 5.5 min</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Metric</span><br><span style="color:var(--text);font-size:13px;font-weight:600;">Avg CTAT</span></div>
-        <div><span style="color:var(--text3);font-size:11px;">Avg</span><br><span style="color:var(--text);font-size:13px;">15.6 ± 8.4 min</span></div>
+      <h4>Key Stats</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
+        <div style="background:var(--bg3);padding:10px 12px;border-radius:8px;"><span style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Booking Value</span><br><span style="font-size:14px;font-weight:600;">₹1,023 ± 564</span></div>
+        <div style="background:var(--bg3);padding:10px 12px;border-radius:8px;"><span style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Ride Distance</span><br><span style="font-size:14px;font-weight:600;">25.4 ± 14.2 km</span></div>
+        <div style="background:var(--bg3);padding:10px 12px;border-radius:8px;"><span style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Avg VTAT</span><br><span style="font-size:14px;font-weight:600;">10.5 ± 5.5 min</span></div>
+        <div style="background:var(--bg3);padding:10px 12px;border-radius:8px;"><span style="color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Avg CTAT</span><br><span style="font-size:14px;font-weight:600;">15.6 ± 8.4 min</span></div>
       </div>
     </div>
   </div>
 </div>
+
+<div class="section-divider"></div>
 
 <!-- CORRELATION -->
 <div class="section" id="correlation">
   <div class="section-header">
-    <div class="sec-num">Step 1</div>
-    <h2>Correlation Analysis</h2>
+    <div class="sec-tag">🔬 Step 1</div>
+    <h2>Correlation <span class="highlight">Analysis</span></h2>
     <p>Understanding how operational metrics interact with each other and with ride success.</p>
   </div>
-
-  <div class="content-row">
-    <div class="chart-box"><div class="chart-title">🔗 Correlation Heatmap</div><div class="chart-wrap" id="figure3"></div></div>
+  <div class="content-split">
+    <div class="chart-card"><div class="chart-head">🔗 Correlation Heatmap</div><div class="chart-body" id="figure3"></div></div>
     <div class="insight" style="margin:0;">
-      <div class="insight-header"><span class="badge badge-finding">What We Found</span></div>
-      <h4>Weak Correlations, Clear Patterns</h4>
-      <p>No single metric strongly predicts ride success. Hour of day and booking value show the clearest (but still modest) associations with completion outcomes. Ratings cluster tightly around 4.0 with little variance — suggesting they're influenced by factors beyond the dataset.</p>
-      <div style="margin-top:14px;padding:12px;background:var(--bg3);border-radius:8px;">
-        <span style="font-size:12px;color:var(--text2);">💡 Key insight: Temporal patterns (hour, day) matter more than any single operational metric for predicting ride outcomes.</span>
+      <div class="insight-row"><span class="badge badge-blue">FINDING</span></div>
+      <h4>Weak Correlations, Clear Temporal Signal</h4>
+      <p>No single metric strongly predicts ride success. Hour of day shows the clearest association with outcomes. Ratings cluster around 4.0 — driven by factors beyond this dataset.</p>
+      <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--accent);">
+        <span style="font-size:12px;color:var(--text2);">💡 <strong>Key Insight:</strong> Temporal patterns (hour of day, day of week) matter more than any single operational metric for predicting ride outcomes.</span>
       </div>
     </div>
   </div>
 </div>
 
+<div class="section-divider"></div>
+
 <!-- DEMAND -->
 <div class="section" id="demand">
   <div class="section-header">
-    <div class="sec-num">Step 2</div>
-    <h2>Temporal & Spatial Demand Patterns</h2>
+    <div class="sec-tag">📈 Step 2</div>
+    <h2>Temporal & Spatial <span class="highlight">Demand Patterns</span></h2>
     <p>How does Ola ride demand vary across time and locations in Bangalore?</p>
   </div>
 
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="d-demand">Demand by Vehicle & Area</button>
-    <button class="tab-btn" data-tab="d-hourly">Cancellation by Hour</button>
+  <div class="tab-strip">
+    <button class="tab-btn active" data-tab="d1">Demand & Value</button>
+    <button class="tab-btn" data-tab="d2">Hourly Cancellation</button>
   </div>
 
-  <div class="tab-pane active" id="d-demand">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">🚙 Avg Booking Value by Vehicle Type</div><div class="chart-wrap" id="figure1"></div></div>
-      <div class="chart-box"><div class="chart-title">📍 Top 5 Pickup Areas by Demand</div><div class="chart-wrap" id="figure2"></div></div>
+  <div class="tab-pane active" id="d1">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">🚙 Avg Booking Value by Vehicle</div><div class="chart-body" id="figure1"></div></div>
+      <div class="chart-card"><div class="chart-head">📍 Top 5 Pickup Areas</div><div class="chart-body" id="figure2"></div></div>
     </div>
   </div>
-  <div class="tab-pane" id="d-hourly">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">🕐 Cancellation Rate by Hour of Day</div><div class="chart-wrap" id="figure9"></div></div>
+  <div class="tab-pane" id="d2">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">🕐 Cancellation Rate by Hour</div><div class="chart-body" id="figure9"></div></div>
       <div class="insight" style="margin:0;">
-        <div class="insight-header"><span class="badge badge-finding">What We Found</span></div>
+        <div class="insight-row"><span class="badge badge-blue">FINDING</span></div>
         <h4>Evening Peaks Drive Cancellations</h4>
-        <p>Demand is lowest midnight-6 AM, rises from 7 AM, and peaks sharply 6-10 PM. Cancellation rates spike during these same evening windows — riders are more likely to cancel when wait times are uncertain and traffic congestion is worst.</p>
-        <div style="margin-top:14px;padding:12px;background:var(--bg3);border-radius:8px;">
-          <span style="font-size:12px;color:var(--text2);">💡 The evening peak (6-10 PM) is both the highest-demand and highest-cancellation period — a critical window for intervention.</span>
+        <p>Demand rises from 7 AM and peaks sharply 6-10 PM. Cancellation rates spike during the same evening window — riders cancel more when wait times are uncertain and traffic is worst.</p>
+        <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--accent);">
+          <span style="font-size:12px;color:var(--text2);">💡 The <strong>6-10 PM evening peak</strong> is both the highest-demand AND highest-cancellation period — a critical intervention window.</span>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<div class="section-divider"></div>
+
 <!-- PROBLEM 1 -->
 <div class="section" id="p1">
   <div class="section-header">
-    <div class="sec-num">Problem 1</div>
-    <h2>Cancellations & Driver Earnings Volatility</h2>
-    <p>How do ride cancellations and incomplete trips affect drivers' ability to earn steadily across different times and areas?</p>
+    <div class="sec-tag">⚠️ Problem 1</div>
+    <h2>Cancellations & <span class="highlight">Driver Earnings Volatility</span></h2>
+    <p>How do cancellations and incomplete trips affect driver earnings stability across different times and areas?</p>
   </div>
 
-  <div class="flow">
-    <div class="flow-item">
-      <div class="flow-step">🔍 What we Analyzed</div>
-      <h4>Cancellation patterns by area & hour</h4>
+  <div class="flow-grid">
+    <div class="flow-card">
+      <div class="fc-icon blue">🔍</div>
+      <div class="fc-step">What We Analyzed</div>
+      <h4>Cancellation patterns</h4>
       <p>Examined cancellation rates across 45+ pickup areas and 24 hours. Compared earnings volatility in high vs low cancellation zones.</p>
     </div>
-    <div class="flow-item">
-      <div class="flow-step">📊 What we Found</div>
-      <h4>Cancellations cluster in hotspot areas</h4>
-      <p>Areas like Area-27, 36, 37 show 35-37% cancellation rates. These same zones have the most volatile driver earnings — high income per trip but long idle periods between.</p>
+    <div class="flow-card">
+      <div class="fc-icon green">📊</div>
+      <div class="fc-step">What We Found</div>
+      <h4>Hotspot concentration</h4>
+      <p>Areas like Area-27, 36, 37 show 35-37% cancellation rates. These same zones have the most volatile driver earnings — high per-trip but unpredictable income.</p>
     </div>
-    <div class="flow-item">
-      <div class="flow-step">💡 What to Do</div>
-      <h4>Dynamic driver incentives in hotspots</h4>
-      <p>Introduce minimum earnings guarantees in high-cancellation zones during peak hours. Improve ETA accuracy to reduce rider frustration cancellations.</p>
-    </div>
-  </div>
-
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="p1-cancel">Cancellation Analysis</button>
-    <button class="tab-btn" data-tab="p1-earnings">Earnings Impact</button>
-    <button class="tab-btn" data-tab="p1-compare">Cancel vs Volatility</button>
-  </div>
-
-  <div class="tab-pane active" id="p1-cancel">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">📍 Top 10 Areas by Cancellation Rate</div><div class="chart-wrap" id="figure4"></div></div>
-      <div class="chart-box"><div class="chart-title">🕐 Cancellation Rate by Hour</div><div class="chart-wrap" id="figure9b"></div></div>
-    </div>
-  </div>
-  <div class="tab-pane" id="p1-earnings">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">📈 Top 10 Areas by Earnings Volatility</div><div class="chart-wrap" id="figure5"></div></div>
-      <div class="chart-box"><div class="chart-title">💰 Income Variability in Key Areas</div><div class="chart-wrap" id="figure7"></div></div>
-    </div>
-  </div>
-  <div class="tab-pane" id="p1-compare">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">📊 Cancel Rate vs Earnings Volatility</div><div class="chart-wrap" id="figure6"></div></div>
-      <div class="chart-box"><div class="chart-title">📦 High vs Low Cancellation Areas</div><div class="chart-wrap" id="figure8"></div></div>
+    <div class="flow-card">
+      <div class="fc-icon amber">💡</div>
+      <div class="fc-step">What To Do</div>
+      <h4>Dynamic incentives</h4>
+      <p>Minimum earnings guarantees in high-cancellation zones during peak hours. Improved ETA accuracy. Smarter driver allocation after cancellations.</p>
     </div>
   </div>
 
-  <div class="insight">
-    <div class="insight-header"><span class="badge badge-finding">Key Finding</span></div>
-    <h4>Cancellations Are Concentrated, Not Random</h4>
-    <p>Cancellations spike during peak hours (evening 6-10 PM) and concentrate in specific high-density pickup zones (Areas 2, 6, 11, 17, 35, 27, 36, 37). These same pockets exhibit the highest volatility in driver take-home earnings — creating a double penalty where drivers face both frequent cancellations and unpredictable income.</p>
+  <div class="tab-strip">
+    <button class="tab-btn active" data-tab="p1a">Cancellation Analysis</button>
+    <button class="tab-btn" data-tab="p1b">Earnings Impact</button>
+    <button class="tab-btn" data-tab="p1c">Cancel vs Volatility</button>
+  </div>
+
+  <div class="tab-pane active" id="p1a">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">📍 Top 10 Areas by Cancellation Rate</div><div class="chart-body" id="figure4"></div></div>
+      <div class="chart-card"><div class="chart-head">🕐 Cancellation Rate by Hour</div><div class="chart-body" id="figure9b"></div></div>
+    </div>
+  </div>
+  <div class="tab-pane" id="p1b">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">📈 Top 10 by Earnings Volatility</div><div class="chart-body" id="figure5"></div></div>
+      <div class="chart-card"><div class="chart-head">💰 Income Variability in Key Areas</div><div class="chart-body" id="figure7"></div></div>
+    </div>
+  </div>
+  <div class="tab-pane" id="p1c">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">📊 Cancel Rate vs Earnings Volatility</div><div class="chart-body" id="figure6"></div></div>
+      <div class="chart-card"><div class="chart-head">📦 High vs Low Cancellation Areas</div><div class="chart-body" id="figure8"></div></div>
+    </div>
   </div>
 
   <div class="insight">
-    <div class="insight-header"><span class="badge badge-recommend">Recommendation</span></div>
-    <h4>Targeted Interventions for High-Volatility Zones</h4>
-    <p><strong>1. Driver incentives:</strong> Introduce minimum trip guarantees or short bonus schemes in high-cancellation, high-volatility pockets so drivers aren't penalized for serving difficult zones. <strong>2. Smarter allocation:</strong> Strengthen matching logic — faster reassignment when a rider cancels, better ETAs, proactive driver placement before peak demand. <strong>3. Rider communication:</strong> Add clearer wait-time messages before confirming booking in hotspots to discourage last-minute cancellations.</p>
+    <div class="insight-row"><span class="badge badge-blue">KEY FINDING</span> <span class="badge badge-green">RECOMMENDATION</span></div>
+    <h4>Cancellations Are Concentrated, Not Random — And They Hit Drivers Hardest</h4>
+    <p>Cancellations spike during <strong>evening peak hours (6-10 PM)</strong> and concentrate in <strong>specific high-density zones</strong> (Areas 2, 6, 11, 17, 35, 27, 36, 37). These same pockets show the <strong>highest earnings volatility</strong> — creating a double penalty where drivers face both frequent cancellations AND unpredictable income. <strong>Action:</strong> Introduce dynamic driver incentives in these zones, strengthen matching logic for faster reassignment, and add clearer wait-time communication for riders.</p>
   </div>
 </div>
+
+<div class="section-divider"></div>
 
 <!-- PROBLEM 2 -->
 <div class="section" id="p2">
   <div class="section-header">
-    <div class="sec-num">Problem 2</div>
-    <h2>Payment Methods & Ride Completion</h2>
-    <p>How do different payment methods affect ride completion, cancellations, and customer experience?</p>
+    <div class="sec-tag">💳 Problem 2</div>
+    <h2>Payment Methods & <span class="highlight">Ride Completion</span></h2>
+    <p>How do payment methods affect completion rates, cancellations, and customer experience?</p>
   </div>
 
-  <div class="flow">
-    <div class="flow-item">
-      <div class="flow-step">🔍 What we Analyzed</div>
-      <h4>Payment method impact on completion</h4>
-      <p>Compared completion rates, cancellation rates, and average ratings across Cash, UPI, Card, and Wallet payment methods.</p>
+  <div class="flow-grid">
+    <div class="flow-card">
+      <div class="fc-icon blue">🔍</div>
+      <div class="fc-step">What We Analyzed</div>
+      <h4>Payment impact analysis</h4>
+      <p>Compared completion rates, cancellation rates, and ratings across Cash, UPI, Card, and Wallet payments.</p>
     </div>
-    <div class="flow-item">
-      <div class="flow-step">📊 What we Found</div>
-      <h4>Digital payments perform better</h4>
-      <p>UPI and Wallet payments show higher completion rates and more consistent ratings. Cash transactions have slightly higher cancellation rates and more rating variability.</p>
+    <div class="flow-card">
+      <div class="fc-icon green">📊</div>
+      <div class="fc-step">What We Found</div>
+      <h4>Digital performs better</h4>
+      <p>UPI and Wallet payments show higher completion rates. Cash has slightly higher cancellation rates and more rating variability.</p>
     </div>
-    <div class="flow-item">
-      <div class="flow-step">💡 What to Do</div>
-      <h4>Nudge toward digital payments</h4>
-      <p>Offer small discounts or loyalty points for UPI/Wallet payments. Default to digital payment in the app. Investigate cash ride friction points.</p>
-    </div>
-  </div>
-
-  <div class="tab-bar">
-    <button class="tab-btn active" data-tab="p2-complete">Completion Rates</button>
-    <button class="tab-btn" data-tab="p2-ratings">Ratings</button>
-  </div>
-
-  <div class="tab-pane active" id="p2-complete">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">✅ Completion Rate by Payment Method</div><div class="chart-wrap" id="figure13"></div></div>
-      <div class="chart-box"><div class="chart-title">❌ Cancellation Rate by Payment Method</div><div class="chart-wrap" id="figure14"></div></div>
-    </div>
-  </div>
-  <div class="tab-pane" id="p2-ratings">
-    <div class="content-row">
-      <div class="chart-box"><div class="chart-title">⭐ Avg Customer Rating by Payment Method</div><div class="chart-wrap" id="figure15"></div></div>
-      <div class="chart-box"><div class="chart-title">🚙 Completion Rate by Vehicle Type</div><div class="chart-wrap" id="figure16"></div></div>
+    <div class="flow-card">
+      <div class="fc-icon amber">💡</div>
+      <div class="fc-step">What To Do</div>
+      <h4>Nudge to digital</h4>
+      <p>Small discounts or loyalty points for UPI/Wallet. Default to digital. Investigate cash friction points in the payment flow.</p>
     </div>
   </div>
 
-  <div class="insight">
-    <div class="insight-header"><span class="badge badge-finding">Key Finding</span></div>
-    <h4>Payment Choice Matters for Completion</h4>
-    <p>Digital payments (UPI, cards, wallets) associate with higher completion rates compared to cash. While all methods show generally high completion (~67%), cash transactions have a slightly larger share of cancellations. Customer ratings remain close to 4.0 across all methods with only minor variation.</p>
+  <div class="tab-strip">
+    <button class="tab-btn active" data-tab="p2a">Completion & Cancellation</button>
+    <button class="tab-btn" data-tab="p2b">Ratings & Vehicle Type</button>
+  </div>
+
+  <div class="tab-pane active" id="p2a">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">✅ Completion Rate by Payment Method</div><div class="chart-body" id="figure13"></div></div>
+      <div class="chart-card"><div class="chart-head">❌ Cancellation Rate by Payment Method</div><div class="chart-body" id="figure14"></div></div>
+    </div>
+  </div>
+  <div class="tab-pane" id="p2b">
+    <div class="content-split">
+      <div class="chart-card"><div class="chart-head">⭐ Avg Rating by Payment Method</div><div class="chart-body" id="figure15"></div></div>
+      <div class="chart-card"><div class="chart-head">🚙 Completion Rate by Vehicle Type</div><div class="chart-body" id="figure16"></div></div>
+    </div>
   </div>
 
   <div class="insight">
-    <div class="insight-header"><span class="badge badge-recommend">Recommendation</span></div>
-    <h4>Encourage Reliable Payment Methods</h4>
-    <p><strong>1. Incentivize digital:</strong> Small loyalty rewards, default UPI/wallet selection, or gentle prompts at booking time. <strong>2. Monitor cash friction:</strong> Investigate whether payment flow issues (failed transactions, end-of-trip confusion) contribute to cash ride cancellations. <strong>3. Targeted experiments:</strong> In cash-dominant areas with high cancellations, test digital-only offers or simplified digital onboarding.</p>
+    <div class="insight-row"><span class="badge badge-blue">KEY FINDING</span> <span class="badge badge-green">RECOMMENDATION</span></div>
+    <h4>Payment Choice Actively Affects Ride Outcomes</h4>
+    <p>Digital payments (UPI, cards, wallets) show <strong>higher completion rates</strong> than cash. While all methods average ~67% completion, cash transactions contribute disproportionately to cancellations. Ratings are stable across methods (~4.0). <strong>Action:</strong> Incentivize digital payments through loyalty rewards, default to UPI/Wallet, and investigate cash-related friction in the booking/trip flow.</p>
   </div>
 </div>
+
+<div class="section-divider"></div>
 
 <!-- PROBLEM 3 -->
 <div class="section" id="p3">
   <div class="section-header">
-    <div class="sec-num">Problem 3</div>
-    <h2>Waiting Time & Service Quality</h2>
+    <div class="sec-tag">⏱️ Problem 3</div>
+    <h2>Waiting Time & <span class="highlight">Service Quality</span></h2>
     <p>How do waiting times (VTAT/CTAT) affect cancellations and customer satisfaction?</p>
   </div>
 
-  <div class="flow">
-    <div class="flow-item">
-      <div class="flow-step">🔍 What we Analyzed</div>
-      <h4>VTAT patterns and rating correlation</h4>
-      <p>Analyzed the distribution of VTAT (Vehicle Turnaround Time) for successful bookings and its relationship with customer ratings.</p>
+  <div class="flow-grid">
+    <div class="flow-card">
+      <div class="fc-icon blue">🔍</div>
+      <div class="fc-step">What We Analyzed</div>
+      <h4>VTAT patterns & ratings</h4>
+      <p>Analyzed VTAT distribution and its relationship with customer ratings. Used time-of-day and area proxies for broader context.</p>
     </div>
-    <div class="flow-item">
-      <div class="flow-step">📊 What we Found</div>
-      <h4>Weak direct VTAT-rating link</h4>
-      <p>VTAT varies widely (1-20 min). Correlation with ratings is near zero — waiting-time effects show up more clearly in hourly/area patterns than in direct VTAT comparison.</p>
+    <div class="flow-card">
+      <div class="fc-icon green">📊</div>
+      <div class="fc-step">What We Found</div>
+      <h4>Contextual waiting effects</h4>
+      <p>Direct VTAT-rating correlation is near-zero. But hourly and area-level patterns show clear links between longer waits and higher cancellations.</p>
     </div>
-    <div class="flow-item">
-      <div class="flow-step">💡 What to Do</div>
-      <h4>Manage wait times via area/hour proxies</h4>
-      <p>Focus on high-wait, low-rating zones identified through time/area analysis. Better ETAs and proactive driver positioning in congested zones.</p>
+    <div class="flow-card">
+      <div class="fc-icon amber">💡</div>
+      <div class="fc-step">What To Do</div>
+      <h4>Manage via proxies</h4>
+      <p>Focus on high-wait zones identified through time/area analysis. Better ETAs, proactive driver positioning, and improved data collection.</p>
     </div>
   </div>
 
-  <div class="content-row">
-    <div class="chart-box"><div class="chart-title">📊 VTAT Distribution</div><div class="chart-wrap" id="figure10"></div></div>
-    <div class="chart-box"><div class="chart-title">⭐ Avg Customer Rating by VTAT Bin</div><div class="chart-wrap" id="figure11"></div></div>
-  </div>
-
-  <div class="insight">
-    <div class="insight-header"><span class="badge badge-finding">Key Finding</span></div>
-    <h4>Waiting Time Effects Are Contextual</h4>
-    <p>Longer effective waiting times associate with higher cancellations and lower ratings — but the effect is best observed through time-of-day and area-level patterns rather than raw VTAT alone. High-wait zones overlap with high-cancellation zones identified in Problem 1, suggesting a localized service quality issue.</p>
+  <div class="content-split">
+    <div class="chart-card"><div class="chart-head">📊 VTAT Distribution</div><div class="chart-body" id="figure10"></div></div>
+    <div class="chart-card"><div class="chart-head">⭐ Avg Rating by VTAT Bin</div><div class="chart-body" id="figure11"></div></div>
   </div>
 
   <div class="insight">
-    <div class="insight-header"><span class="badge badge-recommend">Recommendation</span></div>
-    <h4>Reduce Friction in High-Wait Zones</h4>
-    <p><strong>1. Driver positioning:</strong> Pre-position drivers before known peak hours in congested pickup areas. <strong>2. ETA transparency:</strong> Give riders realistic ETAs and live driver-location updates during peak windows. <strong>3. Data investment:</strong> Improve VTAT/CTAT data collection to build precise models of rider patience thresholds.</p>
+    <div class="insight-row"><span class="badge badge-blue">KEY FINDING</span> <span class="badge badge-green">RECOMMENDATION</span></div>
+    <h4>Waiting Time Effects Are Real But Contextual</h4>
+    <p>Longer waits correlate with <strong>higher cancellations and lower ratings</strong> — best observed through time-of-day and area-level patterns. High-wait zones overlap with high-cancellation zones (Areas 2, 6, 11, 17, 35). <strong>Action:</strong> Pre-position drivers before peak hours in congested zones, provide realistic ETAs with live updates, and invest in better VTAT/CTAT data collection for future modeling.</p>
   </div>
 </div>
+
+<div class="section-divider"></div>
 
 <!-- FARE -->
 <div class="section" id="fare">
   <div class="section-header">
-    <div class="sec-num">Exploratory</div>
-    <h2>Fare Modeling Attempt</h2>
-    <p>Testing whether ride fares can be predicted from publicly available data alone.</p>
+    <div class="sec-tag">🧪 Exploratory</div>
+    <h2>Fare Modeling <span class="highlight">Attempt</span></h2>
+    <p>Testing whether ride fares can be predicted from publicly available data alone — and being honest about the limitations.</p>
   </div>
-
-  <div class="content-row">
-    <div class="chart-box"><div class="chart-title">📉 Actual vs Predicted Fare (Ridge Regression)</div><div class="chart-wrap" id="figure12"></div></div>
+  <div class="content-split">
+    <div class="chart-card"><div class="chart-head">📉 Actual vs Predicted Fare (Ridge Regression, R² ≈ 0)</div><div class="chart-body" id="figure12"></div></div>
     <div class="insight" style="margin:0;">
-      <div class="insight-header"><span class="badge badge-limitation">Limitation</span></div>
-      <h4>Fare Prediction Not Feasible (R² ≈ 0)</h4>
-      <p>Ridge Regression using distance, hour, and vehicle type achieves near-zero R². Fares depend on dynamic factors absent from this dataset: surge pricing, real-time traffic, promotional discounts, and route-specific variables.</p>
-      <div style="margin-top:14px;padding:12px;background:var(--bg3);border-radius:8px;">
-        <span style="font-size:12px;color:var(--text2);">⚠️ Without access to Ola's internal surge and pricing data, fare modeling is exploratory at best. The analysis rightly focuses on operational efficiency where patterns are clearer.</span>
+      <div class="insight-row"><span class="badge badge-red">LIMITATION</span></div>
+      <h4>Fare Prediction Is Not Feasible</h4>
+      <p>Ridge Regression using distance, hour, and vehicle type achieves <strong>near-zero R²</strong>. Fares depend on dynamic factors absent from this dataset: surge pricing, real-time traffic, promotions, and route-specific variables.</p>
+      <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--danger);">
+        <span style="font-size:12px;color:var(--text2);">⚠️ Without surge, traffic, and promotions data, fare modeling is exploratory. The analysis rightly focuses on <strong>operational efficiency</strong> where patterns are clearer and actionable.</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FINDINGS -->
-<div class="section" id="findings">
+<div class="section-divider"></div>
+
+<!-- RECOMMENDATIONS -->
+<div class="section" id="rec">
   <div class="section-header">
-    <div class="sec-num">Conclusion</div>
-    <h2>Consolidated Findings & Recommendations</h2>
-    <p>Three core problems, three data-driven insights, and targeted actions for Ola Bangalore.</p>
+    <div class="sec-tag">🎯 Conclusion</div>
+    <h2>Findings & <span class="highlight">Recommendations</span></h2>
+    <p>Three problems, three data-driven insights, and a strategic action plan for Ola Bangalore.</p>
   </div>
 
-  <div class="table-wrap">
+  <div class="table-card">
     <table>
-      <thead><tr><th>Problem</th><th>Finding</th><th>Impact</th><th>Recommendation</th></tr></thead>
+      <thead><tr><th>Problem</th><th>Key Finding</th><th>Impact</th><th>Recommendation</th></tr></thead>
       <tbody>
-        <tr><td>Cancellations & Earnings</td><td>Cancellations cluster in specific peak hours and high-density zones; same areas show highest earnings volatility</td><td>Drivers face unpredictable income; riders experience unreliable service in hotspots</td><td>Dynamic driver incentives in high-volatility zones; improved ETA accuracy; rider wait-time communication</td></tr>
-        <tr><td>Payment Methods</td><td>Digital payments (UPI, wallets) show higher completion rates than cash</td><td>Cash rides contribute disproportionately to cancellations</td><td>Incentivize digital payments; monitor cash friction points; targeted experiments in cash-dominant areas</td></tr>
-        <tr><td>Waiting Time & Quality</td><td>Longer waits correlate with higher cancellations and lower ratings in congested areas</td><td>Service quality issues concentrated in specific zones and peak hours</td><td>Proactive driver positioning; realistic ETAs; better VTAT/CTAT data collection</td></tr>
+        <tr><td><strong>Cancellations & Earnings</strong></td><td>Cancellations cluster in peak hours & high-density zones; same areas show highest earnings volatility</td><td>Unpredictable driver income; unreliable service in hotspots</td><td>Dynamic incentives in high-volatility zones; better ETAs; rider communication</td></tr>
+        <tr><td><strong>Payment Methods</strong></td><td>Digital payments (UPI, wallets) show higher completion than cash</td><td>Cash rides contribute disproportionately to cancellations</td><td>Incentivize digital; monitor cash friction; targeted experiments</td></tr>
+        <tr><td><strong>Waiting Time & Quality</strong></td><td>Longer waits correlate with higher cancellations & lower ratings in congested zones</td><td>Service quality issues concentrated in specific areas & peak hours</td><td>Proactive driver positioning; realistic ETAs; better data collection</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h3 style="margin:30px 0 16px;font-size:18px;font-weight:600;color:var(--text);">🎯 Strategic Action Plan</h3>
+  <h3 style="font-size:18px;font-weight:700;margin:36px 0 16px;">Strategic Action Plan</h3>
   <div class="rec-grid">
-    <div class="rec-card"><div class="rec-icon">⚙️</div><h4>For Operations</h4><p>Target high-volatility zones with dynamic driver incentives during peak hours. Improve ETA accuracy and driver positioning in congested pickup areas. Use demand forecasting to pre-position drivers before known peak windows.</p></div>
-    <div class="rec-card"><div class="rec-icon">📱</div><h4>For Product</h4><p>Nudge riders toward digital payment methods through in-app incentives. Surface estimated wait times more transparently to manage rider expectations. Investigate cash payment friction points in the UX flow.</p></div>
-    <div class="rec-card"><div class="rec-icon">👨‍✈️</div><h4>For Drivers</h4><p>Stabilize earnings in volatile areas through guaranteed minimums during identified peak windows. Provide area-specific earnings insights to help drivers choose optimal zones. Reduce idle time through smarter reassignment after cancellations.</p></div>
+    <div class="rec-card">
+      <div class="rec-icon">⚙️</div>
+      <h4>For Operations</h4>
+      <p>Target high-volatility zones with <strong>dynamic driver incentives</strong> during peak hours. Improve ETA accuracy and driver positioning in congested areas. Pre-position drivers before known peak windows using demand forecasting.</p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-icon">📱</div>
+      <h4>For Product</h4>
+      <p><strong>Nudge riders toward digital payments</strong> through in-app incentives and default selection. Surface realistic wait times transparently. Investigate cash payment friction points in the UX flow.</p>
+    </div>
+    <div class="rec-card">
+      <div class="rec-icon">👨‍✈️</div>
+      <h4>For Drivers</h4>
+      <p><strong>Stabilize earnings</strong> in volatile areas through guaranteed minimums during peak windows. Provide area-specific earnings insights. Reduce idle time with smarter reassignment after cancellations.</p>
+    </div>
   </div>
-</div>
 
-<!-- LIMITATIONS -->
-<div class="section" id="limitations" style="border-bottom:none;">
-  <div class="section-header">
-    <div class="sec-num">Scope</div>
-    <h2>Limitations & Future Work</h2>
-    <p>Being transparent about what this analysis can and cannot tell us.</p>
-  </div>
-
-  <div class="lim-list">
-    <div class="lim-item">
-      <span class="lim-icon">📡</span>
-      <div class="lim-text">
-        <h4>Secondary Dataset Constraints</h4>
-        <p>No access to Ola's internal surge multipliers, promotional discounts, or real-time routing algorithms. Certain behaviors (especially fare dynamics) cannot be fully explained without this data.</p>
-      </div>
-    </div>
-    <div class="lim-item">
-      <span class="lim-icon">⏱️</span>
-      <div class="lim-text">
-        <h4>Incomplete Turnaround-Time Data</h4>
-        <p>VTAT/CTAT fields are missing for ~33% of rides. Analysis uses a cleaner subset and time-of-day/area proxies — results should be treated as indicative, not exhaustive.</p>
-      </div>
-    </div>
-    <div class="lim-item">
-      <span class="lim-icon">📉</span>
-      <div class="lim-text">
-        <h4>Fare Prediction Not Possible</h4>
-        <p>Exploratory fare models consistently underperform a simple mean baseline. Robust prediction requires surge, traffic, promotions, and route data not available here.</p>
-      </div>
-    </div>
-    <div class="lim-item">
-      <span class="lim-icon">📍</span>
-      <div class="lim-text">
-        <h4>Geographic & Temporal Scope</h4>
-        <p>Findings are specific to Ola's Bangalore operations during the dataset's time period. Different cities, time ranges, or newer pricing policies may produce different patterns.</p>
-      </div>
-    </div>
-    <div class="lim-item">
-      <span class="lim-icon">🔬</span>
-      <div class="lim-text">
-        <h4>Future Work</h4>
-        <p>With access to richer operational logs (real wait times, driver shift schedules, route/traffic data), future studies could build causal models, evaluate specific interventions, and design real-time optimization strategies for driver deployment and pricing.</p>
-      </div>
-    </div>
+  <h3 style="font-size:18px;font-weight:700;margin:36px 0 16px;">Limitations & Future Scope</h3>
+  <div class="lim-grid">
+    <div class="lim-card"><span class="lim-icon">📡</span><div class="lim-body"><h4>Secondary Dataset</h4><p>No surge pricing, promotions, or routing logic. Fare dynamics cannot be fully explained without internal data.</p></div></div>
+    <div class="lim-card"><span class="lim-icon">⏱️</span><div class="lim-body"><h4>Incomplete VTAT/CTAT Data</h4><p>~33% missing. Results use proxies — indicative, not exhaustive.</p></div></div>
+    <div class="lim-card"><span class="lim-icon">📍</span><div class="lim-body"><h4>Bangalore-Specific</h4><p>Findings may not generalize to other cities or time periods.</p></div></div>
+    <div class="lim-card"><span class="lim-icon">🔬</span><div class="lim-body"><h4>Future Work</h4><p>With richer data (driver shifts, real-time traffic), build causal models and design real-time optimization strategies.</p></div></div>
   </div>
 </div>
 
 <footer>
-  <p>Built for the <strong>BDM Capstone</strong> — IIT Madras Online BS Degree Program</p>
-  <p>By <strong>Sarang Rao</strong> · <a href="https://github.com/SarangRao20/BDM_OLA">GitHub</a> · Data: Kaggle Bengaluru Ola Dataset</p>
+  <p><strong>BDM Capstone</strong> — IIT Madras Online BS Degree Program</p>
+  <p style="margin-top:4px;">By <strong>Sarang Rao</strong> · <a href="https://github.com/SarangRao20/BDM_OLA">GitHub</a> · <a href="https://www.kaggle.com/datasets/muhammadahmadmujahid/ola-dataset">Kaggle Dataset</a></p>
 </footer>
 
-<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button id="topBtn">↑</button>
 
 <script>
-// Load charts
-// Map of element IDs to JSON file names (supports duplicate charts)
-const chartMap = {figure1:'figure1',figure2:'figure2',figure3:'figure3',figure4:'figure4',figure5:'figure5',figure6:'figure6',figure7:'figure7',figure8:'figure8',figure9:'figure9',figure9b:'figure9',figure10:'figure10',figure11:'figure11',figure12:'figure12',figure13:'figure13',figure14:'figure14',figure15:'figure15',figure16:'figure16'};
-Object.entries(chartMap).forEach(([id, file]) => {
+// Chart map (element ID → JSON file)
+const cmap = {figure1:'figure1',figure2:'figure2',figure3:'figure3',figure4:'figure4',figure5:'figure5',figure6:'figure6',figure7:'figure7',figure8:'figure8',figure9:'figure9',figure9b:'figure9',figure10:'figure10',figure11:'figure11',figure12:'figure12',figure13:'figure13',figure14:'figure14',figure15:'figure15',figure16:'figure16'};
+Object.entries(cmap).forEach(([id,file]) => {
   const el = document.getElementById(id);
-  if (!el) return;
+  if(!el) return;
   fetch(`data/${file}.json`).then(r=>r.json()).then(d => {
     const div = document.createElement('div'); div.style.width='100%'; div.style.height='100%';
     el.appendChild(div);
-    d.layout = d.layout || {};
-    Object.assign(d.layout, {autosize:true, margin:{l:50,r:20,t:10,b:50}, plot_bgcolor:'rgba(0,0,0,0)', paper_bgcolor:'rgba(0,0,0,0)', font:{color:'#9ca3af',family:'Inter,sans-serif',size:11}});
-    if(d.layout.title) d.layout.title.font = {color:'#f3f4f6',size:13};
+    d.layout = d.layout||{};
+    Object.assign(d.layout, {autosize:true, margin:{l:40,r:10,t:10,b:40}, plot_bgcolor:'rgba(0,0,0,0)', paper_bgcolor:'rgba(0,0,0,0)', font:{color:'#94a3b8',family:'Inter,sans-serif',size:10}});
+    if(d.layout.title) d.layout.title.font={color:'#f1f5f9',size:12.5};
     Plotly.react(div, d.data, d.layout, {responsive:true, displayModeBar:{eager:true}});
-  }).catch(()=>{el.innerHTML='<div style="padding:40px;text-align:center;color:var(--text3)">Chart loading...</div>'});
+  }).catch(()=>{el.innerHTML='<div style="padding:40px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>'});
 });
 
 // Tabs
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = btn.dataset.tab;
-    const sect = btn.closest('.section') || document;
-    sect.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    sect.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    const pane = document.getElementById(id);
-    if(pane) pane.classList.add('active');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 150);
-  });
-});
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', function() {
+  const id = this.dataset.tab;
+  const root = this.closest('.section')||document;
+  root.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  this.classList.add('active');
+  root.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+  const p = document.getElementById(id);
+  if(p) p.classList.add('active');
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),150);
+}));
 
 // Nav
-document.querySelectorAll('.topnav a[data-target]').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const el = document.getElementById(a.dataset.target);
-    if(el) el.scrollIntoView({behavior:'smooth'});
-  });
-});
+document.querySelectorAll('.topnav a[data-target]').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  const el = document.getElementById(a.dataset.target);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}));
 
-// Scroll: nav highlight + top button + KPI animation
-const navLinks = document.querySelectorAll('.topnav a[data-target]');
-const sections = document.querySelectorAll('.section, .hero');
+// Progress bar + nav highlight + KPI animation
+const prog = document.getElementById('progress');
+const navs = document.querySelectorAll('.topnav a[data-target]');
+const secs = document.querySelectorAll('.section, .hero');
 const topBtn = document.getElementById('topBtn');
 let kpiDone = false;
 
 window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  let current = '';
-  sections.forEach(s => { if(y >= s.offsetTop - 250) current = s.id; });
-  navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === current));
-  topBtn.classList.toggle('show', y > 500);
-  if(!kpiDone && y > 100) { animateKPIs(); kpiDone = true; }
+  const y = window.scrollY, h = document.documentElement.scrollHeight - window.innerHeight;
+  prog.style.width = Math.min(y/h*100, 100) + '%';
+  let cur = '';
+  secs.forEach(s => { if(y >= s.offsetTop - 300) cur = s.id; });
+  navs.forEach(a => a.classList.toggle('active', a.dataset.target === cur));
+  topBtn.classList.toggle('show', y > 400);
+  if(!kpiDone && y > 150) { animateKPI(); kpiDone = true; }
 });
 
-function animateKPIs() {
+topBtn.onclick = () => window.scrollTo({top:0,behavior:'smooth'});
+
+function animateKPI() {
   document.querySelectorAll('.kpi-num[data-count]').forEach(el => {
     const t = parseInt(el.dataset.count);
-    if(t < 100) { el.textContent = t; return; }
-    const steps = 40, inc = t/steps;
+    if(t < 20) return;
+    const steps = 50, inc = t/steps;
     let c = 0;
-    const timer = setInterval(() => { c += inc; if(c >= t) { el.textContent = t.toLocaleString(); clearInterval(timer); } else el.textContent = Math.round(c).toLocaleString(); }, 30);
+    const ti = setInterval(() => { c+=inc; if(c>=t) { el.textContent=t.toLocaleString(); clearInterval(ti); } else el.textContent=Math.round(c).toLocaleString(); }, 25);
   });
 }
 
-setTimeout(() => window.dispatchEvent(new Event('scroll')), 300);
+setTimeout(() => window.dispatchEvent(new Event('scroll')), 200);
 </script>
 </body>
 </html>
