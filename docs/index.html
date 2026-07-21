@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ola Bangalore Efficiency Analysis — BDM Capstone</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --danger: #f85149;
+  --warn: #d29922;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+.sidebar { position: fixed; top:0; left:0; width:260px; height:100vh; background:var(--bg2); border-right:1px solid var(--border); overflow-y:auto; z-index:100; padding:0; }
+.sidebar-header { padding:20px; border-bottom:1px solid var(--border); }
+.sidebar-header h2 { font-size:15px; color:var(--accent); }
+.sidebar-header p { font-size:12px; color:var(--text2); margin-top:4px; }
+.sidebar nav a { display:block; padding:10px 20px; color:var(--text2); text-decoration:none; font-size:13px; border-left:3px solid transparent; transition:0.2s; }
+.sidebar nav a:hover, .sidebar nav a.active { color:var(--text); background:var(--bg3); border-left-color:var(--accent); }
+.main { margin-left:260px; padding:0; }
+.hero { background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1c2333 100%); padding:60px 50px; border-bottom:1px solid var(--border); }
+.hero h1 { font-size:32px; font-weight:700; color:var(--accent); }
+.hero p { color:var(--text2); margin-top:10px; font-size:16px; max-width:800px; }
+.hero .badges { margin-top:15px; }
+.hero .badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; margin-right:8px; margin-bottom:4px; }
+.hero .badge.green { background:#1b3a2d; color:#3fb950; }
+.hero .badge.blue { background:#1c2d4a; color:#58a6ff; }
+.hero .badge.purple { background:#2a1e4a; color:#a371f7; }
+.hero .badge.cyan { background:#0e3a4a; color:#1f9eae; }
+.section { padding:40px 50px; border-bottom:1px solid var(--border); }
+.section h2 { font-size:24px; margin-bottom:20px; color:var(--accent); }
+.section h3 { font-size:18px; margin:20px 0 10px; color:var(--accent2); }
+.section p, .section li { color:var(--text2); font-size:15px; margin-bottom:10px; }
+.section ul { padding-left:20px; }
+.chart-container { width:100%; margin:15px 0; border-radius:8px; overflow:hidden; background:var(--bg2); border:1px solid var(--border); }
+.chart-container .plotly-graph-div { margin:0 auto; }
+.chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin:20px 0; }
+.kpi { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:20px; text-align:center; }
+.kpi .num { font-size:28px; font-weight:700; color:var(--accent); }
+.kpi .label { font-size:13px; color:var(--text2); margin-top:5px; }
+table { width:100%; border-collapse:collapse; margin:15px 0; font-size:14px; }
+table th, table td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--border); }
+table th { background:var(--bg2); color:var(--accent); font-weight:600; }
+table td { color:var(--text2); }
+table tr:hover td { background:var(--bg3); }
+.finding-card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:20px; margin:15px 0; }
+.finding-card h4 { color:var(--accent2); margin-bottom:8px; }
+.finding-card p { color:var(--text2); font-size:14px; }
+.finding-card .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; margin-bottom:8px; }
+.tag.problem { background:#3d1f1f; color:#f85149; }
+.tag.solution { background:#1b3d2a; color:#3fb950; }
+.tag.insight { background:#1c2d4a; color:#58a6ff; }
+footer { padding:30px 50px; text-align:center; color:var(--text2); font-size:13px; border-top:1px solid var(--border); }
+@media(max-width:900px) {
+  .sidebar { position:relative; width:100%; height:auto; border-right:none; border-bottom:1px solid var(--border); }
+  .main { margin-left:0; }
+  .section, .hero { padding:30px 20px; }
+  .kpi-row { grid-template-columns:repeat(2,1fr); }
+  .chart-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>OLA Bangalore</h2>
+    <p>BDM Capstone — IIT Madras</p>
+  </div>
+  <nav>
+    <a href="#overview" class="active">Overview</a>
+    <a href="#data">Dataset & Methodology</a>
+    <a href="#correlation">Correlation Analysis</a>
+    <a href="#temporal">Temporal Patterns</a>
+    <a href="#problem1">Problem 1: Cancellations & Earnings</a>
+    <a href="#problem2">Problem 2: Payment Methods</a>
+    <a href="#problem3">Problem 3: Waiting Time & Quality</a>
+    <a href="#fare">Fare Modeling</a>
+    <a href="#findings">Findings & Recommendations</a>
+    <a href="#limitations">Limitations</a>
+  </nav>
+</div>
+
+<div class="main">
+
+<div class="hero" id="overview">
+  <h1>Ola Bangalore Efficiency Analysis</h1>
+  <p>A data-driven investigation into cancellations, driver earnings, payment behavior, and service quality using 50,000+ Ola Bangalore ride records. Built as the capstone for IIT Madras's BDM course.</p>
+  <div class="badges">
+    <span class="badge green">status: completed</span>
+    <span class="badge blue">python 3.10+</span>
+    <span class="badge purple">IITM BDM Capstone</span>
+    <span class="badge cyan">ride-hailing analytics</span>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="num">50,000+</div><div class="label">Ride Records</div></div>
+    <div class="kpi"><div class="num">16</div><div class="label">Interactive Charts</div></div>
+    <div class="kpi"><div class="num">3</div><div class="label">Problem Areas</div></div>
+    <div class="kpi"><div class="num">7</div><div class="label">Vehicle Types</div></div>
+  </div>
+</div>
+
+<div class="section" id="data">
+  <h2>Dataset & Methodology</h2>
+  <p>The <strong>Bengaluru Ola Booking Dataset</strong> contains 50,000 ride records with 21 columns covering booking status, timestamps, pickup/drop locations, vehicle type, payment method, fare, ride distance, ratings, and cancellation reasons.</p>
+  <h3>Analytics Pipeline</h3>
+  <p style="background:var(--bg2);padding:12px 16px;border-radius:6px;border:1px solid var(--border);font-family:monospace;font-size:13px;">Raw CSV → Data Cleaning → Feature Engineering → Exploratory Analysis → Statistical Modeling → Business Recommendations</p>
+  <h3>Key Features Engineered</h3>
+  <ul>
+    <li>Temporal features: Hour of day, Day of week, Weekend flag, Peak hour indicator</li>
+    <li>Target variable: Is_Success (1 = completed, 0 = cancelled/incomplete)</li>
+    <li>Label encoding for pickup/drop locations, vehicle type, payment method</li>
+  </ul>
+  <h3>Descriptive Statistics</h3>
+  <table>
+    <tr><th>Metric</th><th>Count</th><th>Mean</th><th>Std</th><th>Min</th><th>Max</th></tr>
+    <tr><td>Booking Value</td><td>33,484</td><td>1,023</td><td>564</td><td>50</td><td>2,000</td></tr>
+    <tr><td>Ride Distance</td><td>33,484</td><td>25.4 km</td><td>14.2</td><td>1</td><td>50</td></tr>
+    <tr><td>Avg VTAT</td><td>33,484</td><td>10.5 min</td><td>5.5</td><td>1</td><td>20</td></tr>
+    <tr><td>Avg CTAT</td><td>33,484</td><td>15.6 min</td><td>8.4</td><td>1</td><td>30</td></tr>
+    <tr><td>Driver Ratings</td><td>33,484</td><td>4.00</td><td>0.58</td><td>3</td><td>5</td></tr>
+    <tr><td>Customer Rating</td><td>33,484</td><td>4.00</td><td>0.58</td><td>3</td><td>5</td></tr>
+  </table>
+</div>
+
+<div class="section" id="correlation">
+  <h2>Correlation Analysis</h2>
+  <p>Correlation analysis reveals how key operational metrics interact. Hour of day and booking value show the clearest (though still modest) associations with ride completion and cancellation outcomes.</p>
+  <div class="chart-container" id="figure3"></div>
+</div>
+
+<div class="section" id="temporal">
+  <h2>Temporal Demand Patterns</h2>
+  <p>Ride demand in Bangalore is strongly time-dependent. Hourly ride counts rise from early morning, peak during evening commute (6-10 PM), and drop sharply at night. Weekday demand slightly exceeds weekends.</p>
+  <div class="chart-grid">
+    <div class="chart-container" id="figure1"></div>
+    <div class="chart-container" id="figure2"></div>
+  </div>
+  <div class="chart-container" id="figure9"></div>
+</div>
+
+<div class="section" id="problem1">
+  <h2>Problem 1: Cancellations & Driver Earnings Volatility</h2>
+  <p>How do ride cancellations and incomplete trips affect drivers' earning stability across different times and areas?</p>
+
+  <h3>Top Cancellation Areas</h3>
+  <div class="chart-grid">
+    <div class="chart-container" id="figure4"></div>
+    <div class="chart-container" id="figure5"></div>
+  </div>
+
+  <h3>Cancellation Rate vs Earnings Volatility</h3>
+  <div class="chart-grid">
+    <div class="chart-container" id="figure6"></div>
+    <div class="chart-container" id="figure7"></div>
+  </div>
+
+  <h3>High vs Low Cancellation Areas</h3>
+  <div class="chart-container" id="figure8"></div>
+
+  <div class="finding-card">
+    <span class="tag insight">Key Finding</span>
+    <h4>Cancellations Are Concentrated</h4>
+    <p>Cancellation rates spike during peak hours (evening 6-10 PM) and concentrate in high-density pickup zones. These same areas exhibit the highest volatility in driver take-home earnings, creating a double penalty: drivers face both frequent cancellations and unpredictable income.</p>
+  </div>
+  <div class="finding-card">
+    <span class="tag solution">Recommendation</span>
+    <h4>Targeted Driver Incentives</h4>
+    <p>Introduce dynamic driver incentives and minimum earnings guarantees in high-cancellation, high-volatility zones during peak hours. Improve driver positioning and ETA accuracy to reduce rider cancellations.</p>
+  </div>
+</div>
+
+<div class="section" id="problem2">
+  <h2>Problem 2: Payment Methods & Ride Completion</h2>
+  <p>How do different payment methods affect ride completion, cancellations, and customer experience?</p>
+  <div class="chart-grid">
+    <div class="chart-container" id="figure13"></div>
+    <div class="chart-container" id="figure14"></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-container" id="figure15"></div>
+    <div class="chart-container" id="figure16"></div>
+  </div>
+  <div class="finding-card">
+    <span class="tag insight">Key Finding</span>
+    <h4>Digital Payments Perform Better</h4>
+    <p>Digital payments (UPI, wallets, cards) associate with measurably higher completion rates and more consistent ratings compared to cash-based rides. Cash transactions show higher cancellation rates.</p>
+  </div>
+  <div class="finding-card">
+    <span class="tag solution">Recommendation</span>
+    <h4>Nudge Toward Digital Payments</h4>
+    <p>Encourage riders toward digital payment methods through in-app incentives, loyalty rewards, or default UPI/wallet selection at booking time to reduce cash-related friction and cancellations.</p>
+  </div>
+</div>
+
+<div class="section" id="problem3">
+  <h2>Problem 3: Waiting Time & Service Quality</h2>
+  <p>How do waiting times (VTAT/CTAT) affect cancellations and customer ratings?</p>
+  <div class="chart-grid">
+    <div class="chart-container" id="figure10"></div>
+    <div class="chart-container" id="figure11"></div>
+  </div>
+  <div class="finding-card">
+    <span class="tag insight">Key Finding</span>
+    <h4>Waiting Time Impacts Quality</h4>
+    <p>Longer VTAT/CTAT correlates with higher cancellation risk and lower customer ratings, especially in congested areas during peak hours. The effect is most visible through hourly and area-level patterns.</p>
+  </div>
+  <div class="finding-card">
+    <span class="tag solution">Recommendation</span>
+    <h4>Manage Wait Times Proactively</h4>
+    <p>Pre-position drivers before known peaks in high-wait zones. Provide riders with more accurate ETAs and live driver-location updates during peak windows to manage expectations and reduce frustration-driven cancellations.</p>
+  </div>
+</div>
+
+<div class="section" id="fare">
+  <h2>Fare Modeling</h2>
+  <p>An exploratory fare prediction model using Ridge Regression demonstrates that accurate fare prediction is not feasible with the publicly available dataset alone. Fares depend on dynamic factors like surge pricing, real-time traffic, and promotional discounts absent from this data.</p>
+  <div class="chart-container" id="figure12"></div>
+  <div class="finding-card">
+    <span class="tag problem">Limitation</span>
+    <h4>R² ≈ 0 — Fare Prediction Not Feasible</h4>
+    <p>The Ridge Regression model achieves near-zero R², confirming that robust fare prediction requires real-time supply/demand data, surge multipliers, and traffic information not available in secondary datasets.</p>
+  </div>
+</div>
+
+<div class="section" id="findings">
+  <h2>Findings & Recommendations</h2>
+
+  <div class="finding-card">
+    <span class="tag insight">Key Finding 1</span>
+    <h4>Cancellations & Earnings</h4>
+    <p>Cancellation rates concentrate in specific peak hours and high-density pickup zones. These same pockets exhibit the highest volatility in driver take-home earnings, creating a reliability crisis for drivers.</p>
+  </div>
+  <div class="finding-card">
+    <span class="tag insight">Key Finding 2</span>
+    <h4>Payment Methods</h4>
+    <p>Digital payments (UPI, wallets) associate with measurably higher completion rates and more consistent ratings compared to cash-based rides.</p>
+  </div>
+  <div class="finding-card">
+    <span class="tag insight">Key Finding 3</span>
+    <h4>Waiting Time & Quality</h4>
+    <p>Longer VTAT/CTAT correlates with higher cancellation risk and lower customer ratings, especially in congested areas during peak hours.</p>
+  </div>
+
+  <h3>Strategic Recommendations</h3>
+  <div class="chart-grid" style="grid-template-columns:1fr 1fr 1fr;">
+    <div class="finding-card">
+      <span class="tag solution">Operations</span>
+      <p>Target high-volatility zones with dynamic driver incentives during peak hours. Improve ETA accuracy and driver positioning in congested pickup areas.</p>
+    </div>
+    <div class="finding-card">
+      <span class="tag solution">Product</span>
+      <p>Nudge riders toward digital payment methods through in-app incentives. Surface estimated wait times more transparently to manage rider expectations.</p>
+    </div>
+    <div class="finding-card">
+      <span class="tag solution">Drivers</span>
+      <p>Stabilize earnings in volatile areas through guaranteed minimums during identified peak windows. Provide area-specific earnings insights to help drivers choose optimal zones.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="limitations">
+  <h2>Limitations</h2>
+  <ul>
+    <li><strong>Secondary dataset</strong> — no access to Ola's internal surge pricing, promotion, or routing logic</li>
+    <li><strong>VTAT/CTAT fields</strong> missing for a significant portion of rides</li>
+    <li><strong>Fare modeling</strong> limited by absence of contextual pricing variables</li>
+    <li><strong>Geographic scope</strong> specific to Bangalore; findings may not generalize to other cities</li>
+  </ul>
+</div>
+
+<footer>
+  <p>Built for the BDM Capstone — IIT Madras Online BS Degree Program</p>
+  <p>By <strong>Sarang Rao</strong> · <a href="https://github.com/SarangRao20/BDM_OLA" style="color:var(--accent);">GitHub</a></p>
+</footer>
+
+</div>
+
+<script>
+// Load and render Plotly charts from JSON data
+const figures = [
+  'figure1','figure2','figure3','figure4','figure5','figure6','figure7','figure8',
+  'figure9','figure10','figure11','figure12','figure13','figure14','figure15','figure16'
+];
+
+figures.forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  fetch(`data/${id}.json`)
+    .then(r => r.json())
+    .then(data => {
+      const div = document.createElement('div');
+      div.style.width = '100%';
+      div.style.height = '420px';
+      el.appendChild(div);
+      data.layout = data.layout || {};
+      data.layout.autosize = true;
+      data.layout.margin = {l:50, r:20, t:40, b:50};
+      data.layout.plot_bgcolor = 'rgba(0,0,0,0)';
+      data.layout.paper_bgcolor = 'rgba(0,0,0,0)';
+      data.layout.font = {color: '#c9d1d9', family: '-apple-system, BlinkMacSystemFont, sans-serif'};
+      if (data.layout.title) data.layout.title.font = {color: '#58a6ff', size: 14};
+      Plotly.react(div, data.data, data.layout, {responsive: true, displayModeBar: false});
+    })
+    .catch(() => { el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text2)">Chart unavailable</div>'; });
+});
+
+// Smooth scroll & nav highlighting
+document.querySelectorAll('.sidebar nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+    document.querySelectorAll('.sidebar nav a').forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+
+const sections = document.querySelectorAll('.section, .hero');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+  document.querySelectorAll('.sidebar nav a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
